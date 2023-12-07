@@ -1,0 +1,1213 @@
+
+from tkinter import*
+from tkinter import ttk 
+from PIL import Image , ImageTk
+from tkinter import messagebox
+import mysql.connector
+import cv2
+import os
+import csv
+from tkinter import filedialog
+
+mydata=[]
+class Attendance:
+        def _init_(self,root):
+                        self.root=root
+                        self.root.geometry("1530x790+0+0")
+                        self.root.title("face Recognition System")
+
+                        #-------varible
+                        self.var_atten_id=StringVar()
+                        self.var_atten_roll=StringVar()
+                        self.var_atten_name=StringVar()
+                        self.var_atten_dep=StringVar()
+                        self.var_atten_time=StringVar()
+                        self.var_atten_date=StringVar()
+                        self.var_atten_attendance=StringVar()
+
+
+                #first img
+                        img=Image.open(r"img/sathya2.jpg")
+                        img=img.resize((500,200),Image.ANTIALIAS)
+                        self.photoimg=ImageTk.PhotoImage(img)
+
+                        f_lbl=Label(self.root,image=self.photoimg)
+                        f_lbl.place(x=0,y=0,width=500,height=200)
+
+                        #second img
+                        img1=Image.open(r"img/facescan2.png")
+                        img1=img1.resize((525,200),Image.ANTIALIAS)
+                        self.photoimg1=ImageTk.PhotoImage(img1)
+
+                        f_lbl=Label(self.root,image=self.photoimg1)
+                        f_lbl.place(x=525,y=0,width=500,height=200)
+
+                        #third img
+                        img2=Image.open(r"img/sathya2.1.jpg")
+                        img2=img2.resize((500,200),Image.ANTIALIAS)
+                        self.photoimg2=ImageTk.PhotoImage(img2)
+
+                        f_lbl=Label(self.root,image=self.photoimg2)
+                        f_lbl.place(x=1000,y=0,width=550,height=200)
+
+                        #bg img
+                        img3=Image.open(r"img/back.jpg")
+                        img3=img3.resize((1530,710),Image.ANTIALIAS)
+                        self.photoimg3=ImageTk.PhotoImage(img3)
+
+                        bg_img=Label(self.root,image=self.photoimg3)
+                        bg_img.place(x=0,y=200,width=1530,height=710)
+
+                        title_lbl = Label(bg_img,text="ATTENDANCE MANAGEMENT SYSTEM",font =("times new roman",35,"bold"),bg = "white",fg="red")
+                        title_lbl.place(x=0,y=0,width=1530,height=45)
+
+                        main_frame=Frame(bg_img,bd=2,bg="white")
+                        main_frame.place(x=20,y=50,width=1480,height=600)
+
+
+
+                #left label frame
+                        Left_frame = LabelFrame(main_frame,bd=2,bg="white",relief=RIDGE,text="Student Attendance Details",font=("times new roman",12,"bold"))
+                        Left_frame.place(x=10,y=10,width=730,height=580)
+
+                        img_left=Image.open(r"img/studentpg1.jpg")
+                        img_left=img_left.resize((720,130),Image.ANTIALIAS)
+                        self.photoimg_left=ImageTk.PhotoImage(img_left)
+
+                        f_lbl=Label(Left_frame,image=self.photoimg_left)
+                        f_lbl.place(x=5,y=0,width=715,height=130)
+
+                        left_inside_frame=Frame(Left_frame,bd=2,relief=RIDGE,bg="white")
+                        left_inside_frame.place(x=0,y=135,width=720,height=370)
+
+
+                        #Label and entry---------------
+                        # Attendance ID
+                        attendanceId_label=Label(left_inside_frame,text="AttendanceId:",font=("times new roman",13,"bold"),bg="white")
+                        attendanceId_label.grid(row=0,column=0,padx=10,pady=5,sticky=W)
+
+                        attendanceID_entry=ttk.Entry(left_inside_frame,width=20,textvariable=self.var_atten_id,font=("times new roman",13,"bold"))
+                        attendanceID_entry.grid(row=0,column=1,padx=10,pady=5,sticky=W)
+
+                        # roll
+                        rollLabel=Label(left_inside_frame,text="Roll:",font=("comicsansns", 11 ,"bold"),bg="white")
+                        rollLabel.grid(row=0,column=2,padx=4,pady=8)
+
+                        atten_roll=ttk.Entry(left_inside_frame,width=22,textvariable=self.var_atten_roll,font=("comicsansns", 11 ,"bold"))
+                        atten_roll.grid(row=0,column=3 ,pady=8)
+
+                        # name
+                        name_Label=Label(left_inside_frame,text="Name:",font=("comicsansns",11,"bold"),bg="white")
+                        name_Label.grid(row=1,column=0)
+
+                        atten_name=ttk.Entry(left_inside_frame,width=22,textvariable=self.var_atten_name,font=("comicsansns",11,"bold"))
+                        atten_name.grid(row=1,column=1,pady=8)
+                        #
+
+
+                        #department
+                        depLabel=Label(left_inside_frame,text="Department:",bg="white",font=("comicsansns",11,"bold"))
+                        depLabel.grid(row=1,column=2)
+
+                        atten_dep=ttk.Entry(left_inside_frame,width=22,textvariable=self.var_atten_dep,font=("comicsansns",11,"bold"))
+                        atten_dep.grid(row=1,column=3,pady=8,)
+
+
+                        #time-----------------
+                        timeLabel=Label(left_inside_frame,text="Time:",bg="white",font=("comicsansns",11,"bold"))
+                        timeLabel.grid(row=2,column=0)
+
+                        atten_time=ttk.Entry(left_inside_frame,width=22,textvariable=self.var_atten_time,font=("comicsansns",11,"bold"))
+                        atten_time.grid(row=2,column=1,pady=8,)
+
+
+                        #Date--------------
+                        dateLabel=Label(left_inside_frame,text="Date:",bg="white",font=("comicsansns",11,"bold"))
+                        dateLabel.grid(row=2,column=2)
+
+                        atten_date=ttk.Entry(left_inside_frame,width=22,textvariable=self.var_atten_date,font=("comicsansns",11,"bold"))
+                        atten_date.grid(row=2,column=3,pady=8,)
+
+                        #attendance------------
+                        attendanceLabel=Label(left_inside_frame,text="Attendance Status",bg="white",font=("comicsansns",11,"bold"))
+                        attendanceLabel.grid(row=3,column=0)
+
+                        self.atten_status=ttk.Combobox(left_inside_frame,width=20,textvariable=self.var_atten_attendance,font=("comicsansns",11,"bold"),state="readonly")
+                        self.atten_status["values"]=("Status","Present","Absent")
+                        self.atten_status.grid(row=3,column=1,pady=8)
+                        self.atten_status.current(0)
+
+
+                        #button frame
+                        btn_frame=Frame(left_inside_frame,bd=2,relief=RIDGE,bg="white")
+                        btn_frame.place(x=0,y=300,width=710,height=35)
+
+                        save_btn=Button(btn_frame,text="Import csv",command=self.importCsv,width=17,font=("times new roman",13,"bold"),bg="black",fg="white")
+                        save_btn.grid(row=0,column=0)
+
+                        update_btn=Button(btn_frame,text="Export Csv",command=self.exportCsv,width=17,font=("times new roman",13,"bold"),bg="black",fg="white")
+                        update_btn.grid(row=0,column=1)
+
+                        delete_btn=Button(btn_frame,text="Update",width=17,command=self.Update_data,font=("times new roman",13,"bold"),bg="black",fg="white")
+                        delete_btn.grid(row=0,column=2)
+
+                        reset_btn=Button(btn_frame,text="Reset",command=self.reset_data,width=17,font=("times new roman",13,"bold"),bg="black",fg="white")
+                        reset_btn.grid(row=0,column=3)
+
+
+
+
+
+
+
+
+                #Right label frame
+                        Right_frame = LabelFrame(main_frame,bd=2,bg="white",relief=RIDGE,text="Attendance Details",font=("times new roman",12,"bold"))
+                        Right_frame.place(x=750,y=10,width=720,height=590)
+
+                        # img_right=Image.open(r"img/studentpg1.jpg")
+                        # img_right=img_right.resize((720,130),Image.ANTIALIAS)
+                        # self.photoimg_right=ImageTk.PhotoImage(img_right)
+
+                        # f_lbl=Label(Right_frame,image=self.photoimg_right)
+                        # f_lbl.place(x=5,y=0,width=715,height=130)
+
+
+                        table_frame=Frame(Right_frame,bd=2,relief=RIDGE,bg="white")
+                        table_frame.place(x=5,y=5,width=700,height=455)
+
+                        #----------scrollbar------------------
+                        scroll_x=ttk.Scrollbar(table_frame,orient=HORIZONTAL)
+                        scroll_y=ttk.Scrollbar(table_frame,orient=VERTICAL)
+
+                        self.AttendanceReportTable=ttk.Treeview(table_frame,column=("id","roll","name","department","time","date","attendance"),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
+
+                        scroll_x.pack(side=BOTTOM,fill=X)
+                        scroll_y.pack(side=RIGHT,fill=Y)
+
+                        scroll_x.config(command=self.AttendanceReportTable.xview)
+                        scroll_y.config(command=self.AttendanceReportTable.yview)
+
+
+                        self.AttendanceReportTable.heading("id",text="Attendance ID")
+                        self.AttendanceReportTable.heading("roll",text="Roll")
+                        self.AttendanceReportTable.heading("name",text="Name")
+                        self.AttendanceReportTable.heading("department",text="Department")
+                        self.AttendanceReportTable.heading("time",text="Time")
+                        self.AttendanceReportTable.heading("date",text="Date")
+                        self.AttendanceReportTable.heading("attendance",text="Attendance")
+
+                        self.AttendanceReportTable["show"]="headings"
+                        self.AttendanceReportTable.column("id",width=100)
+                        self.AttendanceReportTable.column("roll",width=100)
+                        self.AttendanceReportTable.column("name",width=100)
+                        self.AttendanceReportTable.column("department",width=100)
+                        self.AttendanceReportTable.column("time",width=100)
+                        self.AttendanceReportTable.column("date",width=100)
+                        self.AttendanceReportTable.column("attendance",width=100)
+
+
+                        self.AttendanceReportTable.pack(fill=BOTH,expand=1)
+
+                        self.AttendanceReportTable.bind("<ButtonRelease>",self.get_cursor)
+
+
+                #-----fetch data----------
+
+        def fecthData(self,rows):
+                self.AttendanceReportTable.delete(*self.AttendanceReportTable.get_children())
+                for i in rows:
+                        self.AttendanceReportTable.insert("",END,values=i)
+        #import csv
+        def importCsv(self):
+                global mydata
+                mydata.clear()
+                fln=filedialog.askopenfilename(initialdir=os.getcwd(),title="Open CSV",filetypes=(("CSV File","*.csv"),("*All File" ,"*.*")),parent=self.root)
+                with open(fln) as myfile:
+                        csvread=csv.reader(myfile,delimiter=",")
+                        for i in csvread:
+                                mydata.append(i)
+                        self.fecthData(mydata)
+
+        #export csv
+        def exportCsv(self):
+                try:
+                        if len(mydata)<1:
+                                messagebox.showerror("No Data","No Data found to export",parent=self.root)
+                                return False
+                        fln=filedialog.asksaveasfilename(initialdir=os.getcwd(),title="Open CSV",filetypes=(("CSV File","*.csv"),("*All File" ,"*.*")),parent=self.root)
+                        with open(fln,mode="w",newline="") as myfile:
+                                exp_write=csv.writer(myfile,delimiter=",")
+                                for i in mydata:
+                                        exp_write.writerow(i)
+                                messagebox.showinfo("Data Export", "Your data exported to"+" " +os.path.basename(fln)+" "+"successfully")
+                except Exception as es:
+                        messagebox.showerror("Error",f"Due To :{str(es)}",parent=self.root)
+
+
+        def get_cursor(self,event=""):
+                cursor_row=self.AttendanceReportTable.focus()
+                content=self.AttendanceReportTable.item(cursor_row)
+                rows=content["values"]
+                self.var_atten_id.set(rows[0])
+                self.var_atten_roll.set(rows[1])
+                self.var_atten_name.set(rows[2])
+                self.var_atten_dep.set(rows[3])
+                self.var_atten_time.set(rows[4])
+                self.var_atten_date.set(rows[5])
+                self.var_atten_attendance.set(rows[6])
+
+
+        def reset_data(self):
+                self.var_atten_id.set("")
+                self.var_atten_roll.set("")
+                self.var_atten_name.set("")
+                self.var_atten_dep.set("")
+                self.var_atten_time.set("")
+                self.var_atten_date.set("")
+                self.var_atten_attendance.set("")
+
+        def Update_data(self):
+                try:
+                        Update = messagebox.askyesno("Update","Do you want to update this student details",parent=self.root)
+                        if Update==True:
+                                self.var_atten_id.get()
+                                self.var_atten_roll.get()
+                                self.var_atten_name.get()
+                                self.var_atten_dep.get()
+                                self.var_atten_time.get()
+                                self.var_atten_date.get()
+                                self.var_atten_attendance.get()
+
+                        else:
+                                if  not Update:
+                                        return
+
+                        fln=filedialog.asksaveasfilename(initialdir=os.getcwd(),title="Open CSV",filetypes=(("CSV File","*.csv"),("*All File" ,"*.*")),parent=self.root)
+                        with open(fln,mode="w",newline="") as myfile:
+                                exp_write=csv.writer(myfile,delimiter=",")
+                                for i in mydata:
+                                        exp_write.writerow(i)
+                        messagebox.showinfo("Success","Student details succefully updated",parent=self.root)
+
+
+
+                except Exception as es:
+                        messagebox.showerror("Error",f"Due to:{str(es)}",parent=self.root)
+
+
+
+if _name== "__main_":
+        root=Tk()
+        obj=Attendance(root)
+        root.mainloop()
+ 1 change: 1 addition & 0 deletions1  
+Database/Student.sql
+@@ -0,0 +1 @@
+SELECT * FROM face_recognizer.student;
+ 1 change: 1 addition & 0 deletions1  
+Database/register.sql
+@@ -0,0 +1 @@
+SELECT * FROM face_recognizer.register;
+ Binary file addedBIN +7.63 KB 
+_pycache_/Attendance.cpython-310.pyc
+Binary file not shown.
+ Binary file addedBIN +7.85 KB 
+_pycache_/Attendance.cpython-39.pyc
+Binary file not shown.
+ Binary file addedBIN +1.56 KB 
+_pycache_/developer.cpython-310.pyc
+Binary file not shown.
+ Binary file addedBIN +4.26 KB 
+_pycache_/face_recognition.cpython-310.pyc
+Binary file not shown.
+ Binary file addedBIN +4.24 KB 
+_pycache_/face_recognition.cpython-39.pyc
+Binary file not shown.
+ Binary file addedBIN +1.26 KB 
+_pycache_/helpdesk.cpython-310.pyc
+Binary file not shown.
+ Binary file addedBIN +4.93 KB 
+_pycache_/main.cpython-310.pyc
+Binary file not shown.
+ Binary file addedBIN +14.1 KB 
+_pycache_/student.cpython-310.pyc
+Binary file not shown.
+ Binary file addedBIN +13.9 KB 
+_pycache_/student.cpython-39.pyc
+Binary file not shown.
+ Binary file addedBIN +2.26 KB 
+_pycache_/train.cpython-310.pyc
+Binary file not shown.
+ Binary file addedBIN +2.32 KB 
+_pycache_/train.cpython-39.pyc
+Binary file not shown.
+ 194,066 changes: 194,066 additions & 0 deletions194,066  
+classifier.xml
+Large diffs are not rendered by default.
+
+ 52 changes: 52 additions & 0 deletions52  
+developer.py
+@@ -0,0 +1,52 @@
+from tkinter import*
+from tkinter import ttk
+from PIL import Image, ImageTk
+from tkinter import messagebox
+import mysql.connector
+import cv2
+
+
+class Developer:
+    def _init_(self, root):
+        self.root = root
+        self.root.geometry("1530x790+0+0")
+        self.root.title("face Recognition System")
+        title_lbl = Label(self.root, text="DEVELOPER", font=(
+            "times new roman", 35, "bold"), bg="white", fg="orange")
+        title_lbl.place(x=0, y=0, width=1530, height=45)
+
+        img_top = Image.open(r"img/bg developer.jpg")
+        img_top = img_top.resize((1530, 700), Image.ANTIALIAS)
+        self.photoimg_top = ImageTk.PhotoImage(img_top)
+
+        f_lbl = Label(self.root, image=self.photoimg_top)
+        f_lbl.place(x=0, y=55, width=1530, height=700)
+#frame-------------------------------
+        main_frame = Frame(f_lbl, bd=2, bg="white")
+        main_frame.place(x=1030, y=0, width=500, height=700)
+
+        img_top1 = Image.open(r"img/developerpic1.jpg")
+        img_top1 = img_top1.resize((200, 200), Image.ANTIALIAS)
+        self.photoimg_top1 = ImageTk.PhotoImage(img_top1)
+
+        f_lbl = Label(main_frame, image=self.photoimg_top1)
+        f_lbl.place(x=300, y=0, width=200, height=200)
+
+
+        # Developer
+        dev_label = Label(main_frame,text="Hello!      \n I am Tharun.R", font=("times new roman", 25, "bold"), bg="white")
+        dev_label.place(x=0,y=5)
+
+        dev_label = Label(main_frame, text="Skill-(Python Developer)", font=("times new roman", 20, "bold"), bg="white")
+        dev_label.place(x=0, y=90)
+
+
+
+
+
+
+
+if _name_ == "_main_":
+    root = Tk()
+    obj = Developer(root)
+    root.mainloop()
+ 160 changes: 160 additions & 0 deletions160  
+face_recognition.py
+@@ -0,0 +1,160 @@
+from tkinter import*
+from tkinter import ttk 
+from PIL import Image , ImageTk
+from tkinter import messagebox
+import mysql.connector
+import cv2
+import os
+import numpy as np
+from time import strftime
+from datetime import datetime
+
+
+class Face_Recognition:
+    def _init_(self,root):
+        self.root=root
+        self.root.geometry("1530x790+0+0")
+        self.root.title("face Recognition System")
+
+
+
+        img=Image.open(r"img/face_detector.jpg")
+        img=img.resize((1530,800),Image.ANTIALIAS)
+        self.photoimg=ImageTk.PhotoImage(img)
+
+
+
+        f_lbl=Label(self.root,image=self.photoimg)
+        f_lbl.place(x=0,y=0,width=1530,height=800)
+
+        title_lbl = Label(self.root,text="FACE RECOGNITION",font =("times new roman",35,"bold"),bg = "white",fg="red")
+        title_lbl.place(x=0,y=0,width=1530,height=45)
+
+        b1_1=Button(f_lbl,text="FACE RECOGNITION",cursor="hand2",command=self.face_recog,font =("times new roman",13,"bold"),bg = "black",fg="white")
+        b1_1.place(x=1050,y=400,width=200,height=40)
+
+        ####----------attendance----------------
+    def mark_attendance(self,i,r,n,d):
+        with open("Attendance.csv","r+",newline="\n")as f:
+            myDataList=f.readlines()
+            name_list=[]
+            for line in myDataList:
+                entry=line.split((","))
+                name_list.append(entry[0])
+            if((i not in name_list) and (r not in name_list) and (n not in name_list) and (d not in name_list)):
+                now=datetime.now()
+                d1=now.strftime("%d/%m/%Y")
+                dtString=now.strftime("%H:%M:%S")
+                f.writelines(f"\n{i},{r},{n},{d},{dtString},{d1},Present")
+
+
+
+
+
+
+#face recognition-----------------------------------------
+
+
+    def face_recog(self):
+        def draw_boundary(img,classifier,scaleFactor,minNeighbor,color,text,clf):
+            gray_image=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+            features=classifier.detectMultiScale(gray_image,scaleFactor,minNeighbor)
+
+
+            coord=[]
+
+            for (x,y,w,h) in features:
+                cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),3)
+                id,predict=clf.predict(gray_image[y:y+h,x:x+w])
+                confidence=int((100*(1-predict/300)))
+
+                conn=mysql.connector.connect(host="localhost",username="root",password="root",database="face_recognizer")
+                my_cursor=conn.cursor()
+
+                my_cursor.execute("select Dep from student where Student_id="+str(id))
+                d=my_cursor.fetchone()
+                d="+".join(d)
+                # separator=''
+                # my_id=separator.join(str(x)for x in d)
+
+
+                my_cursor.execute("select Roll from student where Student_id="+str(id))
+                r=my_cursor.fetchone()
+                r="+".join(r)
+                # separator=''
+                # my_id=separator.join(str(x)for x in r)
+
+
+                my_cursor.execute("select Name from student where Student_id= "+str(id))
+                n=my_cursor.fetchone()
+                n="+".join(n)
+                # separator=''
+                # my_id=separator.join(str(x)for x in n)
+
+
+                my_cursor.execute("select Student_id from student where Student_id= "+str(id))
+                i=my_cursor.fetchone()
+                i="+".join(i)
+                # separator=''
+                # my_id=separator.join(str(x)for x in i)
+
+
+
+
+
+
+
+
+                # my_cursor.execute("select Student_id from student where Student_id="+str(id))
+                # i=my_cursor.fetchone()
+                # i="+".join(i)
+
+
+
+
+
+
+                if confidence>77:
+                    cv2.putText(img,f"ID:{i}",(x,y-75),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
+                    cv2.putText(img,f"Roll:{r}",(x,y-55),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
+                    cv2.putText(img,f"Name:{n}",(x,y-30),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
+                    cv2.putText(img,f"Department:{d}",(x,y-5),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3) 
+                    self.mark_attendance(i,r,n,d)
+                else:
+                    cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),3)
+                    cv2.putText(img,"Unknown Face",(x,y-55),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
+
+
+                coord=[x,y,w,h]
+            return coord
+
+
+        def recognize(img,clf,faceCascade):
+            coord=draw_boundary(img,faceCascade,1.1,10,(255,25,255),"Face",clf)
+            return img
+
+
+        faceCascade=cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+        clf=cv2.face.LBPHFaceRecognizer_create()
+        clf.read("classifier.xml")
+
+
+        video_cap=cv2.VideoCapture(0)
+
+        while True:
+            ret,img=video_cap.read()
+            img=recognize(img,clf,faceCascade)
+            cv2.imshow("Welcome To Face Recognition",img)
+
+            if cv2.waitKey(1)==13:
+                break
+        video_cap.release()
+        cv2.destroyAllWindows()          
+
+
+
+
+if _name=="__main_":
+    root=Tk()
+    obj=Face_Recognition(root)
+    root.mainloop()        
+ 33,314 changes: 33,314 additions & 0 deletions33,314  
+haarcascade_frontalface_default.xml
+Large diffs are not rendered by default.
+
+ 41 changes: 41 additions & 0 deletions41  
+helpdesk.py
+@@ -0,0 +1,41 @@
+from tkinter import*
+from tkinter import ttk
+from PIL import Image, ImageTk
+from tkinter import messagebox
+import mysql.connector
+import cv2
+
+
+class Helpdesk:
+    def _init_(self, root):
+        self.root = root
+        self.root.geometry("1530x790+0+0")
+        self.root.title("face Recognition System")
+        title_lbl = Label(self.root, text="HELP DESK", font=("times new roman", 35, "bold"), bg="white", fg="orange")
+        title_lbl.place(x=0, y=0, width=1530, height=45)
+
+        img_top = Image.open(r"img/helpdesk1.jpg")
+        img_top = img_top.resize((1530, 700), Image.ANTIALIAS)
+        self.photoimg_top = ImageTk.PhotoImage(img_top)
+
+        f_lbl = Label(self.root, image=self.photoimg_top)
+        f_lbl.place(x=0, y=55, width=1530, height=700)
+
+        dev_label = Label(f_lbl, text="EMAIL: tharunreddyramigani@gmail.com", font=("times new roman", 25, "bold"), bg="white")
+        dev_label.place(x=0, y=5)
+
+
+
+
+
+
+
+
+
+
+
+
+if _name_ == "_main_":
+    root = Tk()
+    obj =Helpdesk(root)
+    root.mainloop()
+ Binary file addedBIN +1.98 MB 
+img/FaceScan.png
+
+ Binary file addedBIN +70.1 KB 
+img/Facedet.gif
+
+ Binary file addedBIN +22.3 KB 
+img/PIC1.jpg
+
+ Binary file addedBIN +53.4 KB 
+img/PIC2.jpg
+
+ Binary file addedBIN +31.9 KB 
+img/attendence.jpg
+
+ Binary file addedBIN +52.6 KB 
+img/back.jpg
+
+ Binary file addedBIN +75.8 KB 
+img/bg developer.jpg
+
+ Binary file addedBIN +107 KB 
+img/bgreg1.png
+
+ Binary file addedBIN +2.61 KB 
+img/bgreg4.jpg
+
+ Binary file addedBIN +38.7 KB 
+img/developer.jpg
+
+ Binary file addedBIN +496 KB 
+img/developerpic.jpg
+
+ Binary file addedBIN +420 KB 
+img/developerpic1.jpg
+
+ Binary file addedBIN +156 KB 
+img/exit.jpg
+
+ Binary file addedBIN +35.3 KB 
+img/exit2.jpg
+
+ Binary file addedBIN +11.8 KB 
+img/face rec.jpg
+
+ Binary file addedBIN +53.4 KB 
+img/face_detector.jpg
+
+ Binary file addedBIN +49.1 KB 
+img/facedet2.jpg
+
+ Binary file addedBIN +2.09 MB 
+img/facescan2.png
+
+ Binary file addedBIN +15.1 KB 
+img/help desk.jpg
+
+ Binary file addedBIN +15.2 KB 
+img/helpdesk.jpg
+
+ Binary file addedBIN +48.7 KB 
+img/helpdesk1.jpg
+Unable to render rich display
+
+ Binary file addedBIN +29 KB 
+img/helpdesk2.png
+
+ Binary file addedBIN +24.2 KB 
+img/login2.png
+
+ Binary file addedBIN +546 KB 
+img/loginbg.jpg
+
+ Binary file addedBIN +122 KB 
+img/loginbtn.png
+
+ Binary file addedBIN +1.15 KB 
+img/padloc.png
+ Binary file addedBIN +21.3 KB 
+img/padlock.png
+ Binary file addedBIN +1023 Bytes 
+img/passwor.png
+ Binary file addedBIN +8.35 KB 
+img/password.png
+ Binary file addedBIN +23.7 KB 
+img/photo.jpg
+ Binary file addedBIN +1.65 MB 
+img/reg2.jpg
+ Binary file addedBIN +137 KB 
+img/registerbtn.jpg
+ Binary file addedBIN +29.2 KB 
+img/sathya1.jpg
+ Binary file addedBIN +59.6 KB 
+img/sathya2.1.jpg
+ Binary file addedBIN +29.4 KB 
+img/sathya2.jpg
+ Binary file addedBIN +19.9 KB 
+img/sathya3.jpg
+ Binary file addedBIN +735 KB 
+img/sathyabama.jpg
+ Binary file addedBIN +213 KB 
+img/sathyabama1.jpg
+ Binary file addedBIN +70.6 KB 
+img/sathyabama2.jpeg
+ Binary file addedBIN +25.8 KB 
+img/sathyabama3.jpg
+ Binary file addedBIN +93.8 KB 
+img/student details.jpg
+ Binary file addedBIN +41.6 KB 
+img/student3.jpg
+ Binary file addedBIN +108 KB 
+img/studentdetails2.jpg
+ Binary file addedBIN +5.69 MB 
+img/studentpg1.jpg
+ Binary file addedBIN +23.4 KB 
+img/students2.webp
+Binary file not shown.
+ Binary file addedBIN +159 KB 
+img/stupg1.png
+ Binary file addedBIN +14 KB 
+img/train data.jpg
+ Binary file addedBIN +14.5 KB 
+img/trainface2.jpg
+ Binary file addedBIN +33.9 KB 
+img/trainface3.jpg
+ Binary file addedBIN +24.8 KB 
+img/user.png
+ Binary file addedBIN +20.3 KB 
+img/user2.png
+ Binary file addedBIN +946 Bytes 
+img/user23.png
+ Binary file addedBIN +1.17 KB 
+img/user55.png
+ 367 changes: 367 additions & 0 deletions367  
+login.py
+Large diffs are not rendered by default.
+
+ 197 changes: 197 additions & 0 deletions197  
+main.py
+@@ -0,0 +1,197 @@
+from tkinter import*
+from tkinter import ttk 
+from PIL import Image , ImageTk
+import tkinter
+from click import command
+from cv2 import destroyAllWindows
+from helpdesk import Helpdesk
+from student import Student
+import os
+from train import Train
+from face_recognition import Face_Recognition
+from Attendance import Attendance
+from developer import Developer
+from helpdesk import Helpdesk
+
+
+class Face_Recognition_System:
+    def _init_(self,root):
+        self.root=root
+        self.root.geometry("1530x790+0+0")
+        self.root.title("face Recognition System")
+
+
+        #first img
+        img=Image.open(r"img/sathya2.jpg")
+        img=img.resize((500,130),Image.ANTIALIAS)
+        self.photoimg=ImageTk.PhotoImage(img)
+
+        f_lbl=Label(self.root,image=self.photoimg)
+        f_lbl.place(x=0,y=0,width=500,height=130)
+
+        #second img
+        img1=Image.open(r"img/facescan2.png")
+        img1=img1.resize((525,130),Image.ANTIALIAS)
+        self.photoimg1=ImageTk.PhotoImage(img1)
+
+        f_lbl=Label(self.root,image=self.photoimg1)
+        f_lbl.place(x=525,y=0,width=500,height=130)
+
+        #third img
+        img2=Image.open(r"img/sathya2.1.jpg")
+        img2=img2.resize((500,130),Image.ANTIALIAS)
+        self.photoimg2=ImageTk.PhotoImage(img2)
+
+        f_lbl=Label(self.root,image=self.photoimg2)
+        f_lbl.place(x=1000,y=0,width=550,height=130)
+
+        #bg img
+        img3=Image.open(r"img/back.jpg")
+        img3=img3.resize((1530,710),Image.ANTIALIAS)
+        self.photoimg3=ImageTk.PhotoImage(img3)
+
+        bg_img=Label(self.root,image=self.photoimg3)
+        bg_img.place(x=0,y=130,width=1530,height=710)
+
+        title_lbl = Label(bg_img,text="FACE RECOGNITION ATTENDANCE SYSTEM",font =("times new roman",35,"bold"),bg = "white",fg="red")
+        title_lbl.place(x=0,y=0,width=1530,height=45)
+
+        #student button img
+        img4=Image.open(r"img/student3.jpg")
+        img4=img4.resize((170,170),Image.ANTIALIAS)
+        self.photoimg4=ImageTk.PhotoImage(img4)
+
+        b1=Button(bg_img,image=self.photoimg4,command=self.student_details,cursor="hand2")
+        b1.place(x=200,y=100,width=170,height=170)
+
+        b1_1=Button(bg_img,text="Student Details",command=self.student_details,cursor="hand2",font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b1_1.place(x=200,y=270,width=170,height=30)
+
+        #detect face button
+        img5=Image.open(r"img/facedet2.jpg")
+        img5=img5.resize((170,170),Image.ANTIALIAS)
+        self.photoimg5=ImageTk.PhotoImage(img5)
+
+        b2=Button(bg_img,image=self.photoimg5,cursor="hand2",command=self.face_data)
+        b2.place(x=500,y=100,width=170,height=170)
+
+        b2_1=Button(bg_img,text="Face Detector",cursor="hand2",command=self.face_data,font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b2_1.place(x=500,y=270,width=170,height=30)
+
+        #attendance button
+        img6=Image.open(r"img/attendence.jpg")
+        img6=img6.resize((170,170),Image.ANTIALIAS)
+        self.photoimg6=ImageTk.PhotoImage(img6)
+
+        b3=Button(bg_img,image=self.photoimg6,cursor="hand2",command=self.attendance_data)
+        b3.place(x=800,y=100,width=170,height=170)
+
+        b3_1=Button(bg_img,text="Attendance",cursor="hand2",command=self.attendance_data,font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b3_1.place(x=800,y=270,width=170,height=30)
+
+        #help desk
+        img7=Image.open(r"img/helpdesk.jpg")
+        img7=img7.resize((170,170),Image.ANTIALIAS)
+        self.photoimg7=ImageTk.PhotoImage(img7)
+
+        b4=Button(bg_img,image=self.photoimg7,cursor="hand2",command= self.helpdesk_data)
+        b4.place(x=1100,y=100,width=170,height=170)
+
+        b4_1=Button(bg_img,text="Help Desk",cursor="hand2",font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b4_1.place(x=1100,y=270,width=170,height=30)
+
+        #Train Face
+        img8=Image.open(r"img/trainface3.jpg")
+        img8=img8.resize((170,170),Image.ANTIALIAS)
+        self.photoimg8=ImageTk.PhotoImage(img8)
+
+        b5=Button(bg_img,image=self.photoimg8,cursor="hand2",command=self.train_data)
+        b5.place(x=200,y=350,width=170,height=170)
+
+        b5_1=Button(bg_img,text="Train Face",cursor="hand2",command=self.train_data,font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b5_1.place(x=200,y=520,width=170,height=30)
+
+        #Photos
+        img9=Image.open(r"img/students2.webp")
+        img9=img9.resize((170,170),Image.ANTIALIAS)
+        self.photoimg9=ImageTk.PhotoImage(img9)
+
+        b6=Button(bg_img,image=self.photoimg9,cursor="hand2",command=self.open_img)
+        b6.place(x=500,y=350,width=170,height=170)
+
+        b6_1=Button(bg_img,text="Photos",cursor="hand2",command=self.open_img,font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b6_1.place(x=500,y=520,width=170,height=30)
+
+        #Developer
+        img10=Image.open(r"img/developer.jpg")
+        img10=img10.resize((170,170),Image.ANTIALIAS)
+        self.photoimg10=ImageTk.PhotoImage(img10)
+
+        b7=Button(bg_img,image=self.photoimg10,cursor="hand2",command = self.developer_data)
+        b7.place(x=800,y=350,width=170,height=170)
+
+        b7_1=Button(bg_img,text="Developer",cursor="hand2",font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b7_1.place(x=800,y=520,width=170,height=30)
+
+        #Quit
+        img11=Image.open(r"img/exit2.jpg")
+        img11=img11.resize((170,170),Image.ANTIALIAS)
+        self.photoimg11=ImageTk.PhotoImage(img11)
+
+        b8=Button(bg_img,image=self.photoimg11,cursor="hand2",command=self.exit)
+        b8.place(x=1100,y=350,width=170,height=170)
+
+        b8_1=Button(bg_img,text="Exit",cursor="hand2",command=self.exit,font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b8_1.place(x=1100,y=520,width=170,height=30)
+
+
+    def open_img(self):
+        os.startfile("data")
+
+    def exit(self):
+        self.exit=tkinter.messagebox.askyesno("Face Recognition ","Are you sure exit this project")
+        if self.exit>0:
+            self.root.destroy()
+        else:
+            return
+
+
+#==============================Function Buttons================================
+    def student_details(self):
+        self.new_window=Toplevel(self.root)
+        self.app=Student(self.new_window)
+
+    def train_data(self):
+        self.new_window=Toplevel(self.root)
+        self.app=Train(self.new_window)
+
+    def face_data(self):
+        self.new_window=Toplevel(self.root)
+        self.app=Face_Recognition(self.new_window)
+
+
+    def attendance_data(self):
+        self.new_window=Toplevel(self.root)
+        self.app=Attendance(self.new_window)
+
+    def developer_data(self):
+        self.new_window = Toplevel(self.root)
+        self.app = Developer(self.new_window)
+
+    def helpdesk_data(self):
+        self.new_window = Toplevel(self.root)
+        self.app = Helpdesk(self.new_window)
+
+
+
+
+
+
+
+
+
+if _name=="__main_":
+    root=Tk()
+    obj=Face_Recognition_System(root)
+    root.mainloop()
+
+ 173 changes: 173 additions & 0 deletions173  
+register.py
+@@ -0,0 +1,173 @@
+from atexit import register
+from tkinter import*
+from tkinter import ttk
+from xml.dom.minidom import ReadOnlySequentialNamedNodeMap
+from PIL import Image, ImageTk
+from tkinter import messagebox
+
+import mysql.connector
+
+
+class Register:
+    def _init_(self, root):
+        self.root = root
+        self.root.title("Register")
+        self.root.geometry("1600x900+0+0")
+
+        # -------------variables
+        self.var_fname = StringVar()
+        self.var_lname = StringVar()
+        self.var_contact = StringVar()
+        self.var_email = StringVar()
+        self.var_securityQ = StringVar()
+        self.var_SecurityA = StringVar()
+        self.var_pass = StringVar()
+        self.var_confpass = StringVar()
+
+# bgimage-----------------------
+        self.bg = ImageTk.PhotoImage(file=r"img/sathyabama.jpg")
+        bg_lbl = Label(self.root, image=self.bg)
+        bg_lbl.place(x=0, y=0, relwidth=1, relheight=1)
+
+# leftimg_____-------------------------
+        self.bg1 = ImageTk.PhotoImage(file=r"img/reg2.jpg")
+        left_lbl = Label(self.root, image=self.bg1)
+        left_lbl.place(x=50, y=100, width=470, height=550)
+# mainframe-------------------------------
+        frame = Frame(self.root, bg="white")
+        frame.place(x=520, y=100, width=800, height=550)
+
+        register_lbl = Label(frame, text="REGISTER HERE", font=(
+            "times new romwn", 20, "bold"), fg="darkgreen", bg="white")
+        register_lbl.place(x=20, y=20)
+
+        # lbl and entry------------------
+
+        fname = Label(frame, text="First Name", font=(
+            "times new romwn", 15, "bold"), bg="white", fg="black")
+        fname.place(x=50, y=100)
+
+        self.fname_entry = ttk.Entry(
+            frame, textvariable=self.var_fname, font=("times new romwn", 15,))
+        self.fname_entry.place(x=50, y=130, width=250)
+
+        l_name = Label(frame, text="Last Name",  font=(
+            "times new roman", 15, "bold"), bg="white", fg="black")
+        l_name.place(x=370, y=100)
+
+        self.txt_lname = ttk.Entry(
+            frame, textvariable=self.var_lname, font=("times new roman", 15))
+        self.txt_lname.place(x=370, y=130, width=250)
+# -----------------row2
+        contact = Label(frame, text="Contact No",  font=(
+            "times new roman", 15, "bold"), bg="white", fg="black")
+        contact.place(x=50, y=170)
+
+        self.txt_contact = ttk.Entry(
+            frame, textvariable=self.var_contact, font=("times new roman", 15))
+        self.txt_contact.place(x=50, y=200, width=250)
+
+        email = Label(frame, text="Email",  font=(
+            "times new roman", 15, "bold"), bg="white", fg="black")
+        email.place(x=370, y=170)
+
+        self.txt_email = ttk.Entry(
+            frame, textvariable=self.var_email, font=("times new roman", 15))
+        self.txt_email.place(x=370, y=200, width=250)
+# -------------------row3
+        security_Q = Label(frame, text="Select Security Quetions",   font=(
+            "times new roman", 15, "bold"), bg="white", fg="black")
+        security_Q.place(x=50, y=240)
+
+        self.combo_securiy_Q = ttk.Combobox(frame, textvariable=self.var_securityQ,  font=(
+            "times new roman", 15, "bold"), state="readonly")
+        self.combo_securiy_Q["values"] = (
+            "Select", "Your Birth Place", "Your Girlfriend name", "Your Pet Name")
+        self.combo_securiy_Q.place(x=50, y=270, width=250)
+        self.combo_securiy_Q.current(0)
+
+        self.combo_securiy_Q.current(0)
+        security_A = Label(frame, text="Security Answer",  font=(
+            "times new roman", 15, "bold"), bg="white", fg="black")
+        security_A.place(x=370, y=240)
+        self.txt_security = ttk.Entry(
+            frame, textvariable=self.var_SecurityA, font=("times new roman", 15))
+        self.txt_security.place(x=370, y=270, width=250)
+        # ---------------------row4
+
+        pswd = Label(frame, text="Password ",  font=(
+            "times new roman", 15, "bold"), bg="white", fg="black")
+        pswd.place(x=50, y=310)
+        self.txt_pswd = ttk.Entry(
+            frame, textvariable=self.var_pass, font=("times new roman", 15))
+        self.txt_pswd.place(x=50, y=340, width=250)
+        confirm_pswd = Label(frame, text="Confirm Password",  font=(
+            "times new roman", 15, "bold"), bg="white", fg="black")
+        confirm_pswd.place(x=370, y=310)
+        self.txt_confirm_pswd = ttk.Entry(
+            frame, textvariable=self.var_confpass, font=("times new roman", 15))
+        self.txt_confirm_pswd.place(x=370, y=340, width=250)
+
+        # -----------checkbtn-------------------
+        self.var_check = IntVar()
+        checkbtn = Checkbutton(frame, variable=self.var_check, text="I Agree The Terms & Conditions", font=(
+            "times new roman", 15, "bold"), onvalue=1, offvalue=0)
+        checkbtn.place(x=50, y=380)
+
+        # --------------btns-------
+        img = Image.open(r"./img/registerbtn.jpg")
+        img = img.resize((200, 55), Image. ANTIALIAS)
+        self.photoimage = ImageTk. PhotoImage(img)
+        b1 = Button(frame, image=self.photoimage, command=self.register_data,
+                    borderwidth=0, cursor="hand2", font=("times new roman", 15, "bold"), fg="white")
+        b1.place(x=10, y=420, width=200)
+
+        img1 = Image.open(r"./img/login2.png")
+        img1 = img1.resize((200, 45), Image.ANTIALIAS)
+        self.photoimage1 = ImageTk.PhotoImage(img1)
+        b1 = Button(frame, image=self.photoimage1, borderwidth=0, cursor="hand2", font=(
+            "times new roman", 15, "bold"), fg="white")
+        b1.place(x=330, y=420, width=200)
+
+    def register_data(self):
+
+        if self.var_fname.get() == "" or self.var_email.get() == "" or self.var_securityQ.get() == "Select":
+            messagebox.showerror("Error", "All fields are required")
+        elif self.var_pass.get() != self.var_confpass.get():
+            messagebox.showerror(
+                "Error", "password & confirm password must be same")
+        elif self.var_check.get() == 0:
+            messagebox.showerror(
+                "Error", "Plaese agree our terms ane condition")
+        else:
+            conn = mysql.connector.connect(
+                host="localhost", username="root", password="root", database="face_recognizer")
+
+            my_cursor = conn.cursor()
+            query = ("SELECT * FROM register where email=%s")
+            value = (self.var_email.get(),)
+            my_cursor.execute(query, value)
+            row = my_cursor.fetchone()
+            if row != None:
+                messagebox.showerror(
+                    "Error", "User already exist,plaese try another email")
+            else:
+                my_cursor.execute("insert into register values (%s,%s,%s,%s,%s,%s,%s)", (
+                    self.var_fname.get(),
+                    self.var_lname.get(),
+                    self.var_contact.get(),
+                    self.var_email.get(),
+                    self.var_securityQ.get(),
+                    self.var_SecurityA.get(),
+                    self.var_pass.get()
+                ))
+
+            conn.commit()
+            conn.close()
+            messagebox.showinfo("Success", "Register Successfully")
+
+
+if _name_ == "_main_":
+    root = Tk()
+    app = Register(root)
+    root.mainloop()
+ 614 changes: 614 additions & 0 deletions614  
+student.py
+Large diffs are not rendered by default.
+
+ 79 changes: 79 additions & 0 deletions79  
+train.py
+@@ -0,0 +1,79 @@
+from tkinter import*
+from tkinter import ttk 
+from PIL import Image , ImageTk
+from tkinter import messagebox
+import mysql.connector
+import cv2
+import os
+import numpy as np
+
+class Train:
+    def _init_(self,root):
+        self.root=root
+        self.root.geometry("1530x790+0+0")
+        self.root.title("face Recognition System")
+
+        title_lbl = Label(self.root,text="TRAIN DATASET",font =("times new roman",35,"bold"),bg = "white",fg="red")
+        title_lbl.place(x=0,y=0,width=1530,height=45)
+
+        img_top=Image.open(r"img/facescan2.png")
+        img_top=img_top.resize((1530,325),Image.ANTIALIAS)
+        self.photoimg_top=ImageTk.PhotoImage(img_top)
+
+        f_lbl=Label(self.root,image=self.photoimg_top)
+        f_lbl.place(x=0,y=55,width=1530,height=325)
+#button____________________
+        b1_1=Button(self.root,text="TRAIN DATA",cursor="hand2",command=self.train_classifier,font =("times new roman",15,"bold"),bg = "black",fg="white")
+        b1_1.place(x=0,y=380,width=1530,height=60)
+
+
+        img_bottom=Image.open(r"img/facescan2.png")
+        img_bottom=img_bottom.resize((1530,325),Image.ANTIALIAS)
+        self.photoimg_bottom=ImageTk.PhotoImage(img_bottom)
+
+        f_lbl=Label(self.root,image=self.photoimg_bottom)
+        f_lbl.place(x=0,y=440,width=1530,height=325)
+
+
+    def train_classifier(self):
+        data_dir=("data")
+        path=[os.path.join(data_dir,file) for file in os.listdir(data_dir)]
+
+
+        faces=[]
+        ids=[]
+        for image in path:
+            img=Image.open(image).convert('L')
+            imageNp=np.array(img,'uint8')
+            id=int(os.path.split(image)[1].split('.')[1])
+
+            faces.append(imageNp)
+            ids.append(id)
+            cv2.imshow("Training ",imageNp)
+            cv2.waitKey(1)==13
+        ids=np.array(ids)
+
+        #train the classifier -----------------------
+        clf=cv2.face.LBPHFaceRecognizer_create()
+        clf.train(faces,ids)
+        clf.write("classifier.xml")
+        cv2.destroyAllWindows()
+        messagebox.showinfo("Result","Training completed")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if _name=="__main_":
+    root=Tk()
+    obj=Train(root)
+    root.mainloop()        
